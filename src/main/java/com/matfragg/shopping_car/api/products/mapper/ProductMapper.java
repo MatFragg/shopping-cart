@@ -23,8 +23,7 @@ public class ProductMapper {
                 product.getImageUrl(),
                 product.getSeller().getId(),
                 product.getActive(),
-                product.getAvailable(),
-                product.getCreatedAt()
+                product.getAvailable()
         );
     }
 
