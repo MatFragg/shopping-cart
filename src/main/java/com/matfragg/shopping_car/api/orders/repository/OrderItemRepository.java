@@ -1,28 +1,41 @@
 package com.matfragg.shopping_car.api.orders.repository;
 
-import com.matfragg.shopping_car.api.authentication.model.entities.User;
-import com.matfragg.shopping_car.api.customers.model.entities.Customer;
+import com.matfragg.shopping_car.api.orders.model.entities.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-    boolean existsByUser(User user);
+    List<OrderItem> findByOrderId(Long orderId);
 
-    @Query("SELECT c FROM Customer c WHERE c.user.id = :userId")
-    Optional<Customer> findByUserId(@Param("userId") Long userId);
+    List<OrderItem> findBySellerId(Long sellerId);
 
-    @Query("SELECT c FROM Customer c JOIN FETCH c.user WHERE c.user.id = :userId")
-    Optional<Customer> findByUserIdWithUser(@Param("userId") Long userId);
+    List<OrderItem> findByProductId(Long productId);
 
-    Optional<Customer> findByEmail(String email);
+    long countBySellerId(Long sellerId);
 
-    boolean existsByEmail(String email);
+    @Query("SELECT SUM(oi.subtotal) FROM OrderItem oi " +
+            "WHERE oi.sellerId = :sellerId " +
+            "AND oi.order.status NOT IN ('CANCELLED')")
+    Double getTotalSalesBySeller(@Param("sellerId") Long sellerId);
 
-    boolean existsByPhone(String phone);
+    @Query("SELECT SUM(oi.quantity) FROM OrderItem oi " +
+            "WHERE oi.productId = :productId " +
+            "AND oi.order.status NOT IN ('CANCELLED')")
+    Long getTotalQuantitySoldByProduct(@Param("productId") Long productId);
+
+    boolean existsByProductId(Long productId);
+
+    @Query("SELECT oi FROM OrderItem oi " +
+            "WHERE oi.sellerId = :sellerId " +
+            "AND oi.order.status = :status")
+    List<OrderItem> findBySellerIdAndOrderStatus(
+            @Param("sellerId") Long sellerId,
+            @Param("status") com.matfragg.shopping_car.api.orders.model.enums.OrderStatus status
+    );
 }
