@@ -27,6 +27,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     boolean existsByCustomerIdAndStatus(Long customerId, CartStatus status);
 
     @Query("SELECT COUNT(ci) FROM Cart c JOIN c.items ci " +
-            "WHERE c.customerId = :customerId AND c.status = 'ACTIVE'")
+            "WHERE c.customer.id = :customerId AND c.status = 'ACTIVE'")
     long countActiveCartItems(@Param("customerId") Long customerId);
 }

@@ -11,14 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
-    Optional<CartItem> findByCartIdAndProductId(Long cartId, Long productId);
-
-    List<CartItem> findByCartId(Long cartId);
-
-    List<CartItem> findByProductId(Long productId);
-
-    boolean existsByProductId(Long productId);
-
-    @Query("SELECT COUNT(DISTINCT ci.cart.id) FROM CartItem ci WHERE ci.productId = :productId")
+    @Query("SELECT COUNT(DISTINCT ci.cart.id) FROM CartItem ci WHERE ci.product.id = :productId")
     long countCartsContainingProduct(@Param("productId") Long productId);
+
+    @Query("DELETE FROM CartItem ci WHERE ci.product.id = :productId")
+    void deleteByProductId(@Param("productId") Long productId);
 }
