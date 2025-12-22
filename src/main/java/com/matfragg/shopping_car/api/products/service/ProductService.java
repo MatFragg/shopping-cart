@@ -9,11 +9,16 @@ import java.util.List;
 public interface ProductService {
 
     ProductResponse createProduct(Long sellerId, CreateProductRequest request);
-    ProductResponse updateProduct(Long productId, UpdateProductRequest request);
-    ProductResponse deleteProduct(Long productId);
+    ProductResponse updateProduct(Long sellerId, Long productId, UpdateProductRequest request);
+    void deleteProduct(Long sellerId, Long productId);
     ProductResponse getProductById(Long productId);
-    List<ProductResponse> getAllProducts();
+    List<ProductResponse> getAllAvailableProducts();
+    List<ProductResponse> getAvailableProductsExcludingSeller(Long excludeSellerId);
     List<ProductResponse> getProductsBySellerId(Long sellerId);
-    List<ProductResponse> getAvailableProducts(Long excludeSellerId);
+    List<ProductResponse> getMyProducts(Long sellerId);
+    List<ProductResponse> searchProducts(String searchTerm);
+    List<ProductResponse> getProductsByCategory(String category, Long excludeSellerId);
+    void decreaseStock(Long productId, Integer quantity);
+    void increaseStock(Long productId, Integer quantity);
 
 }
