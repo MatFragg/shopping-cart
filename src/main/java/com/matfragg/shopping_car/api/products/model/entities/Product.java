@@ -5,7 +5,6 @@ import com.matfragg.shopping_car.api.shared.model.BaseModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ public class Product extends BaseModel {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false)
     private Double price;
 
     @Column(nullable = false)
@@ -44,7 +43,19 @@ public class Product extends BaseModel {
     public Product() {
     }
 
-    public Product(String name, String description, Double price, Integer stock, String category, String imageUrl, Long sellerId, Boolean active, Boolean available) {
+    public Product(String name, String description, Double price, Integer stock, String category, String imageUrl, Customer seller, Boolean active, Boolean available) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+        this.category = category;
+        this.imageUrl = imageUrl;
+        this.seller = seller;
+        this.active = active;
+        this.available = available;
+    }
+
+    public void updateProduct(String name, String description, Double price, Integer stock, String category, String imageUrl, Boolean active, Boolean available) {
         this.name = name;
         this.description = description;
         this.price = price;
