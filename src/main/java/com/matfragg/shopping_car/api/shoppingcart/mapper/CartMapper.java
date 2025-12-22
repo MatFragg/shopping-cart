@@ -19,7 +19,7 @@ public class CartMapper {
 
         return new CartResponse(
                 cart.getId(),
-                cart.getCustomerId(),
+                cart.getCustomer().getId(),
                 cart.getStatus(),
                 cart.getTotal(),
                 items,
@@ -31,8 +31,8 @@ public class CartMapper {
     public CartItemResponse toCartItemResponse(CartItem item) {
         return new CartItemResponse(
                 item.getId(),
-                item.getProductId(),
-                item.getSellerId(),
+                item.getProduct().getId(),
+                item.getSeller().getId(),
                 item.getProductName(),
                 item.getQuantity(),
                 item.getUnitPrice(),
