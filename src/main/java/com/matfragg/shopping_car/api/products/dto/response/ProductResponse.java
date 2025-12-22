@@ -13,6 +13,5 @@ public record ProductResponse(
         String imageUrl,
         Long sellerId,
         Boolean active,
-        Boolean available,
-        Date createdAt
+        Boolean available
 ) {}
