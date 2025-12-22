@@ -49,7 +49,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse checkout(Long buyerId) {
+    public OrderResponse checkout(Long userId) {
+        Long buyerId = customerService.findByUserId(userId).id();
+
         CartResponse cart = cartService.getActiveCart(buyerId);
 
         if (cart.items().isEmpty())
@@ -112,7 +114,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getMyPurchases(Long buyerId) {
+    public List<OrderResponse> getMyPurchases(Long userId) {
+        Long buyerId = customerService.findByUserId(userId).id();
+
         customerService.findCustomerById(buyerId);
 
         List<Order> orders = orderRepository.findByBuyerId(buyerId);
@@ -120,7 +124,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getMyPurchasesByStatus(Long buyerId, OrderStatus status) {
+    public List<OrderResponse> getMyPurchasesByStatus(Long userId, OrderStatus status) {
+        Long buyerId = customerService.findByUserId(userId).id();
+
         customerService.findCustomerById(buyerId);
 
         List<Order> orders = orderRepository.findByBuyerIdAndStatus(buyerId, status);
@@ -128,7 +134,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderItemResponse> getMySales(Long sellerId) {
+    public List<OrderItemResponse> getMySales(Long userId) {
+        Long sellerId = customerService.findByUserId(userId).id();
+
         customerService.findCustomerById(sellerId);
 
         List<OrderItem> soldItems = orderItemRepository.findBySellerId(sellerId);
@@ -150,7 +158,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse cancelOrder(Long buyerId, String orderNumber) {
+    public OrderResponse cancelOrder(Long userId, String orderNumber) {
+        Long buyerId = customerService.findByUserId(userId).id();
+
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Order not found with number: " + orderNumber));
