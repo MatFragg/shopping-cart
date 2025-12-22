@@ -16,6 +16,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -58,6 +60,21 @@ public class CustomerServiceImpl implements CustomerService {
                         "Customer not found for user id: " + userId));
 
         return customerMapper.toResponse(customer);
+    }
+
+    @Override
+    public CustomerResponse findCustomerById(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Customer not found with id: " + customerId));
+
+        return customerMapper.toResponse(customer);
+    }
+
+    @Override
+    public List<CustomerResponse> findAllCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+        return customerMapper.toResponseList(customers);
     }
 
     @Override
