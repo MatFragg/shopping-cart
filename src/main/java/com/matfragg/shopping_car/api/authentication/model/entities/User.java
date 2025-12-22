@@ -37,6 +37,9 @@ public class User extends BaseModel {
     @Column(unique = true)
     private String username;
 
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
     @NotBlank
     @Size(max = 120)
     private String password;
@@ -50,14 +53,15 @@ public class User extends BaseModel {
     public User() {
         this.roles = new HashSet<>();
     }
-    public User(String username, String password) {
+    public User(String username, String email, String password) {
         this.username = username;
+        this.email = email;
         this.password = password;
         this.roles = new HashSet<>();
     }
 
-    public User(String username, String password, List<Roles> roles) {
-        this(username, password);
+    public User(String username,String email,  String password, List<Roles> roles) {
+        this(username, email,  password);
         addRoles(roles);
     }
 
