@@ -1,5 +1,7 @@
 package com.matfragg.shopping_car.api.shoppingcart.model.entities;
 
+import com.matfragg.shopping_car.api.customers.model.entities.Customer;
+import com.matfragg.shopping_car.api.products.model.entities.Product;
 import com.matfragg.shopping_car.api.shared.model.BaseModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,11 +19,13 @@ public class CartItem extends BaseModel {
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false, foreignKey = @ForeignKey(name = "fk_item_product"))
+    private Product product;
 
-    @Column(name = "seller_id", nullable = false)
-    private Long sellerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false, foreignKey = @ForeignKey(name = "fk_item_seller"))
+    private Customer seller;
 
     @Column(name = "product_name", nullable = false)
     private String productName;
@@ -35,14 +39,21 @@ public class CartItem extends BaseModel {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
 
-    public CartItem() {}
+    public CartItem() {
+    }
 
-    public CartItem(Long productId, Long sellerId, String productName, Integer quantity, BigDecimal unitPrice) {
-        this.productId = productId;
-        this.sellerId = sellerId;
+    public CartItem(Product product, Customer seller, String productName, Integer quantity, BigDecimal unitPrice) {
+        this.product = product;
+        this.seller = seller;
         this.productName = productName;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+        calculateSubtotal();
+    }
+
+    public void updateItemQuantity(Integer newQuantity, BigDecimal currentPrice) {
+        this.unitPrice = currentPrice;
+        this.quantity = newQuantity;
         calculateSubtotal();
     }
 

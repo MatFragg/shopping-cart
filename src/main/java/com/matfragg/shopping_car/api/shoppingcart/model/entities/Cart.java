@@ -1,5 +1,7 @@
 package com.matfragg.shopping_car.api.shoppingcart.model.entities;
 
+import com.matfragg.shopping_car.api.customers.model.entities.Customer;
+import com.matfragg.shopping_car.api.shared.exceptions.BusinessException;
 import com.matfragg.shopping_car.api.shared.model.BaseModel;
 import com.matfragg.shopping_car.api.shoppingcart.model.enums.CartStatus;
 import jakarta.persistence.*;
@@ -15,8 +17,10 @@ import java.util.List;
 @Table(name = "carts")
 public class Cart extends BaseModel {
 
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_cart_customer"))
+    private Customer customer;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,10 +38,32 @@ public class Cart extends BaseModel {
         recalculateTotal();
     }
 
-    public void removeItem(CartItem item) {
-        items.remove(item);
-        item.setCart(null);
-        recalculateTotal();
+    public void updateItem(Long productId,Integer newQuantity, BigDecimal currentPrice) {
+        if (newQuantity <= 0) {
+            this.items.removeIf(item -> item.getProduct().getId().equals(productId));
+            recalculateTotal();
+            return;
+        }
+        this.items.stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .ifPresent(item -> {
+                    item.updateItemQuantity(newQuantity, currentPrice);
+                    recalculateTotal();
+                });
+    }
+
+    public void removeItemByProductId(Long productId) {
+        boolean removed = items.removeIf(item -> item.getProduct().getId().equals(productId));
+        if (removed)
+            recalculateTotal();
+        else
+            throw new BusinessException("Product not found in cart");
+    }
+
+    public void clear() {
+        this.items.clear();
+        this.total = BigDecimal.ZERO;
     }
 
     public void recalculateTotal() {
