@@ -1,5 +1,6 @@
 package com.matfragg.shopping_car.api.shared.config;
 
+import com.matfragg.shopping_car.api.shared.security.annotation.CurrentUserId;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -24,5 +25,10 @@ public class OpenApiConfig {
                         .type(SecurityScheme.Type.HTTP)
                         .scheme("bearer")
                         .bearerFormat("JWT")));
+    }
+
+    static {
+        org.springdoc.core.utils.SpringDocUtils.getConfig()
+                .addAnnotationsToIgnore(CurrentUserId.class);
     }
 }

@@ -2,6 +2,7 @@ package com.matfragg.shopping_car.api.shared.security;
 
 import com.matfragg.shopping_car.api.authentication.model.entities.User;
 import com.matfragg.shopping_car.api.authentication.repository.UserRepository;
+import com.matfragg.shopping_car.api.shared.exceptions.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,13 @@ public class SecurityUtils {
 
     SecurityUtils(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public Long getCurrentUserId() {
+        return getCurrentUsername()
+                .flatMap(userRepository::findByUsername)
+                .map(User::getId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found in context"));
     }
 
     public static Optional<String> getCurrentUsername() {
