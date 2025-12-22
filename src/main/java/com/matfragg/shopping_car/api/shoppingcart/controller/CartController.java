@@ -33,8 +33,7 @@ public class CartController {
      */
     @PostMapping("/items")
     @Operation(summary = "Add Item to Cart", description = "Adds an item to the authenticated user's cart.")
-    public ResponseEntity<ApiResponse<CartResponse>> addItemToCart(@Parameter(hidden = true) @CurrentUserId Long userId,
-            @Valid @RequestBody AddToCartRequest request) {
+    public ResponseEntity<ApiResponse<CartResponse>> addItemToCart(@Parameter(hidden = true) @CurrentUserId Long userId, @Valid @RequestBody AddToCartRequest request) {
 
         CartResponse cart = cartService.addItem(userId, request);
 
