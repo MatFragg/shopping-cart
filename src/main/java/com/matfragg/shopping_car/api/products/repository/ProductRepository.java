@@ -10,4 +10,9 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findProductsBySellerId(Long sellerId);
     List<Product> findByActiveAndAvailableAndSellerIdNot(boolean active, boolean available, Long sellerId);
+    List<Product> findAvailableProducts();
+    List<Product> findAvailableProductsExcludingSeller(Long sellerId);
+    List<Product> findByName(String name);
+    List<Product> findByCategory(String category);
+    List<Product> findByCategoryAndSellerIdNot(String category, Long sellerId);
 }
