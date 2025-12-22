@@ -2,7 +2,6 @@ package com.matfragg.shopping_car.api.customers.service.impl;
 
 import com.matfragg.shopping_car.api.authentication.model.entities.User;
 import com.matfragg.shopping_car.api.authentication.repository.UserRepository;
-import com.matfragg.shopping_car.api.authentication.service.UserService;
 import com.matfragg.shopping_car.api.customers.dto.request.CreateCustomerRequest;
 import com.matfragg.shopping_car.api.customers.dto.request.UpdateCustomerRequest;
 import com.matfragg.shopping_car.api.customers.dto.response.CustomerResponse;
@@ -26,7 +25,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final CustomerMapper customerMapper;
-    private final UserService userService;
 
     @Override
     public CustomerResponse createCustomer(CreateCustomerRequest request) {
