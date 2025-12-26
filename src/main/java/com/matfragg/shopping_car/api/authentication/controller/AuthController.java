@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -54,4 +51,15 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("User Logged in successfully", authResponse));
     }
 
+    /**
+     * Get the currently authenticated user
+     *
+     * @return ApiResponse with AuthResponse of the current user
+     */
+    @GetMapping("/me")
+    @Operation(summary = "Get Current User", description = "Retrieves the currently authenticated user.")
+    public ResponseEntity<ApiResponse<AuthResponse>> getCurrentUser() {
+        AuthResponse userResponse = authService.getCurrentUser();
+        return ResponseEntity.ok(ApiResponse.success("Current user retrieved successfully", userResponse));
+    }
 }
