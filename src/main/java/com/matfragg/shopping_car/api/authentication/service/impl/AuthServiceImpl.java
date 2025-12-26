@@ -3,6 +3,7 @@ package com.matfragg.shopping_car.api.authentication.service.impl;
 import com.matfragg.shopping_car.api.authentication.dto.request.LoginRequest;
 import com.matfragg.shopping_car.api.authentication.dto.request.RegisterRequest;
 import com.matfragg.shopping_car.api.authentication.dto.response.AuthResponse;
+import com.matfragg.shopping_car.api.authentication.dto.response.CustomerInfo;
 import com.matfragg.shopping_car.api.authentication.exceptions.UnauthorizedException;
 import com.matfragg.shopping_car.api.authentication.mapper.UserMapper;
 import com.matfragg.shopping_car.api.authentication.model.entities.User;
@@ -13,6 +14,7 @@ import com.matfragg.shopping_car.api.customers.dto.request.CreateCustomerRequest
 import com.matfragg.shopping_car.api.customers.dto.response.CustomerResponse;
 import com.matfragg.shopping_car.api.customers.service.CustomerService;
 import com.matfragg.shopping_car.api.shared.exceptions.BadRequestException;
+import com.matfragg.shopping_car.api.shared.exceptions.ResourceNotFoundException;
 import com.matfragg.shopping_car.api.shared.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,6 +55,8 @@ public class AuthServiceImpl implements AuthService {
         newUser.addRole(Roles.valueOf("ROLE_USER"));
         User savedUser = userRepository.save(newUser);
 
+        CustomerResponse customerResponse = null;
+
         if (savedUser.getRoles().contains(Roles.ROLE_USER)) {
             try {
                 CreateCustomerRequest customerRequest = new CreateCustomerRequest(
@@ -63,8 +67,7 @@ public class AuthServiceImpl implements AuthService {
                         savedUser.getId()
                 );
 
-                customerService.createCustomer(customerRequest);
-
+                customerResponse = customerService.createCustomer(customerRequest);
             } catch (Exception e) {
                 throw new BadRequestException("Error creating customer profile: " + e.getMessage());
             }
@@ -78,14 +81,24 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenProvider.generateToken(authentication);
-
+        CustomerInfo customerInfo = null;
+        if (customerResponse != null) {
+            customerInfo = new CustomerInfo(
+                    customerResponse.id(),
+                    customerResponse.firstName(),
+                    customerResponse.lastName(),
+                    customerResponse.phone(),
+                    customerResponse.shippingAddress()
+            );
+        }
         AuthResponse userResponse = userMapper.toResponse(savedUser);
 
         return new AuthResponse(
                 userResponse.id(),
                 userResponse.username(),
                 userResponse.email(),
-                token
+                token,
+                customerInfo
         );
     }
 
@@ -104,13 +117,28 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtTokenProvider.generateToken(authentication);
 
+        CustomerInfo customerInfo = null;
+        try {
+            CustomerResponse customer = customerService.findByUserId(user.getId());
+            customerInfo = new CustomerInfo(
+                    customer.id(),
+                    customer.firstName(),
+                    customer.lastName(),
+                    customer.phone(),
+                    customer.shippingAddress()
+            );
+        } catch (ResourceNotFoundException e) {
+            throw new UnauthorizedException("Customer profile not found for user");
+        }
+
         AuthResponse userResponse = userMapper.toResponse(user);
 
         return new AuthResponse(
                 userResponse.id(),
                 userResponse.username(),
                 userResponse.email(),
-                token
+                token,
+                customerInfo
         );
     }
 
@@ -126,13 +154,28 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UnauthorizedException("User not found"));
 
+        CustomerInfo customerInfo = null;
+        try {
+            CustomerResponse customer = customerService.findByUserId(user.getId());
+            customerInfo = new CustomerInfo(
+                    customer.id(),
+                    customer.firstName(),
+                    customer.lastName(),
+                    customer.phone(),
+                    customer.shippingAddress()
+            );
+        } catch (ResourceNotFoundException e) {
+            throw new UnauthorizedException("Customer profile not found for user");
+        }
+
         AuthResponse userResponse = userMapper.toResponse(user);
 
         return new AuthResponse(
                 userResponse.id(),
                 userResponse.username(),
                 userResponse.email(),
-                null
+                null,
+                customerInfo
         );
     }
 }
