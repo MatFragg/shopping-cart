@@ -11,8 +11,9 @@ public class UserMapper {
     public AuthResponse toResponse(User user) {
         return new AuthResponse(
                 user.getId(),
-                user.getEmail(),
                 user.getUsername(),
+                user.getEmail(),
+                null,
                 null
         );
     }
@@ -20,7 +21,7 @@ public class UserMapper {
     public User toEntity(RegisterRequest registerRequest) {
         return new User(
                 registerRequest.username(),
-                registerRequest.password(),
+                registerRequest.email(),
                 registerRequest.password()
         );
     }
