@@ -30,8 +30,8 @@ import java.math.BigDecimal;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private CustomerRepository customerRepository;
-    private ProductRepository productRepository;
+    private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
     private final ProductService productService;
     private final CustomerService customerService;
     private final CartMapper cartMapper;
