@@ -77,7 +77,7 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success("Order cancelled successfully", order));
     }
 
-    @PutMapping("/{orderNumber}/status")
+    @PatchMapping("/{orderNumber}/status")
     @Operation(summary = "Update order status", description = "Updates order status (admin only)")
     public ResponseEntity<ApiResponse<OrderResponse>> updateOrderStatus(
             @PathVariable String orderNumber,
